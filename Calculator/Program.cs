@@ -92,7 +92,11 @@ internal class Program
             // to delete the keys on backspace
             if (key.Key == ConsoleKey.Backspace)
             {
-                if (keys.Count > 0) keys.RemoveAt(keys.Count - 1);
+
+                if (keys.Count > 0) { 
+                    if(keys.Last().Length == 0) keys.RemoveAt(keys.Count - 1);
+                    else keys[keys.Count -1] = keys.Last().Substring(0, keys.Last().Length - 1);
+                } 
                 continue; // skip if screen is empty
             }
 
