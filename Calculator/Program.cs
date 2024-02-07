@@ -35,6 +35,7 @@ internal class Program
     }
     private static void Main(string[] args)
     {
+        float tmp;
         string keylogs = "";
 
         List<string> keys = new List<string>();
@@ -48,7 +49,7 @@ internal class Program
 
             Console.WriteLine("Simple Calculator in C#\n");
 
-            Console.Write("┌──────────────────\n");
+            Console.Write("┌───────────────────\n");
             Console.Write($"│ {string.Join(" ", keys.Select(x => x.ToString()))}             \n");
             Console.Write("│──────────────────┐\n");
             Console.Write("│   AC  ()  %   /  │\n");
@@ -57,20 +58,30 @@ internal class Program
             Console.Write("│   1   2   3   +  │\n");
             Console.Write("│   0   .   C   =  │\n");
             Console.Write("└──────────────────┘\n");
-            Console.WriteLine($"\n\nKEYLOG : {keylogs}");
-            Console.WriteLine($"keys.Count : {keys.Count} \nkeys : {string.Join(" ", keys.Select(x => x.ToString()))}");
+            //Console.WriteLine($"\n\nKEYLOG : {keylogs}");
+            //Console.WriteLine($"keys.Count : {keys.Count} \nkeys : {string.Join(" ", keys.Select(x => x.ToString()))}");
 
             ConsoleKeyInfo key = Console.ReadKey();
             keylogs += key.Key.ToString() + " ";
             if (!isValidKey(key.Key)) continue;
 
-            if(keys.Count > 0 && isOperator(keys.Last()) && isOperator(key.KeyChar.ToString()) )
+            if (key.Key == ConsoleKey.Decimal)
             {
-                // to prevent more than one consicutive operators like ++ , 23 --/
-                if(keys.Last() != key.KeyChar.ToString())
+                if(float.TryParse(keys.Last() , out tmp) && !keys.Last().Contains("."))
+                {
+                    keys[keys.Count - 1] += ".";
+                }
+                continue;
+            }
+
+            // to prevent more than one consecutive operators like ++ , 23 --/
+            if (keys.Count > 0 && isOperator(keys.Last()) && isOperator(key.KeyChar.ToString()))
+            {
+                if (keys.Last() != key.KeyChar.ToString())
                     keys[keys.Count - 1] = key.KeyChar.ToString();
                 continue;
             }
+
             if (key.Key == ConsoleKey.Enter)
             {
                 // calculate the keys
@@ -85,7 +96,6 @@ internal class Program
                 continue; // skip if screen is empty
             }
 
-            float tmp;
             if (keys.Count > 0 && // checking if the keys list is empty
                 float.TryParse(key.KeyChar.ToString(), out tmp) && // checking if current input is numeric
                 float.TryParse(keys.Last(), out tmp) // checking if last input was numeric
@@ -99,7 +109,7 @@ internal class Program
 
     private static void calculate(List<string> keys)
     {
-        for(int i=1; i<keys.Count-1; i++)
+        for (int i = 1; i < keys.Count - 1; i++)
         {
             string key = keys[i];
 
@@ -108,16 +118,16 @@ internal class Program
                 float res = 0;
                 float num1;
                 float num2;
-                float.TryParse((string)keys[i-1], out num1);
-                float.TryParse((string)keys[i+1], out num2);
+                float.TryParse((string)keys[i - 1], out num1);
+                float.TryParse((string)keys[i + 1], out num2);
 
                 switch (key)
                 {
                     case "+": res = num1 + num2; break;
                     case "-": res = num1 - num2; break;
                     case "*": res = num1 * num2; break;
-                    case "/":res = num1 / num2; break;
-                    case "%":res = num1 % num2; break;
+                    case "/": res = num1 / num2; break;
+                    case "%": res = num1 % num2; break;
                 }
 
                 keys[i - 1] = res.ToString();
